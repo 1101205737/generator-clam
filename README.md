@@ -2,7 +2,6 @@
 
 ![](http://gtms03.alicdn.com/tps/i3/TB11GFPGpXXXXb3XXXXCZmQ1XXX-292-236.png)
 
-
 ### 〇，背景 & 设计原理
 
 [背景知识](https://github.com/jayli/generator-clam/blob/master/userguide.md)
@@ -424,6 +423,14 @@ AWP平台和Clam自带的本地服务都支持这种解析
 1. [Less](http://www.lesscss.net/article/home.html) 和 [Sass](http://www.sass-lang.com/)
 1. [grunt-flexcombo](https://github.com/jayli/grunt-flexcombo)
 1. [flexcombo](https://github.com/wayfind/flex-combo)
+
+-----------
+
+内部重要资料：
+
+1. [本地开发与调试环境](http://groups.alidemo.cn/trip-tools/clam-doc/intro/dev-debug.html)
+1. [AWPP 发布工具使用](http://groups.alidemo.cn/trip-tools/clam-doc/intro/awpp.html)
+1. [generator-clam 工具手册（内部使用）](http://groups.alidemo.cn/trip-tools/clam-doc/index.html)
 
 ### 十五，Q & A
 

@@ -76,10 +76,19 @@ module.exports = function (grunt) {
 				src : 'build/pages/**/*.tms.html'
 			},
 			'offline_tms_html':{
-				src : 'build_offline/pages/**/*.tms.html'
+				src : [
+					'build_offline/pages/**/*.tms.html',
+					'build_offline/pages/*/mock.tms_combo.css',
+					'build_offline/pages/*/mock.tms_combo.js'
+				]
 			},
 			'offline_mods':{
 				src : 'build_offline/mods/**/*.html'
+			},
+			'offline_noise':{
+				src: [
+					'build_offline/widgets/m/build/*.js', '!build_offline/widgets/m/build/mini-all.js'
+				]
 			},
 			htmlFrag:{
 				src: 'build/html-fragments/'
@@ -226,6 +235,7 @@ module.exports = function (grunt) {
                     comboCSS:true,
 					convert2vm: false,
 					convert2php: false,
+					mockFilter: true, // 是否过滤Demo中的JuicerMock
                     comboExt:'_combo',
 					meta : {
 						'pageid' : 'on181.<%= abcpkg.name%>/${path|regexp,"build_offline/",""}'
@@ -316,6 +326,7 @@ module.exports = function (grunt) {
 						'demo', 
 						'demo.com', 
 						'h5.m.taobao.com',
+						'dev.m.taobao.com',
 						'm.trip.taobao.com'
 					],
 					servlet: '?',
@@ -862,10 +873,11 @@ module.exports = function (grunt) {
 				'kmc:offline',
 				'empty',
 				'clean:offline_mods',
-				'clean:offline_tms_html',
 				'clean:htmlFrag',
+				'clean:offline_noise',
 				'replace:offline',
 				'combohtml:offline',
+				'clean:offline_tms_html',
 				'uglify:offline',
 				'cssmin:offline',
 				'cacheinfo',

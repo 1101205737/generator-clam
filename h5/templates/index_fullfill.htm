@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="data-spm" content="181.000000x"/><!--每个页面都必须申请SPM 的 B 点-->
+	<meta name="page-name" content="page=PageName"/><!--内嵌航旅App的每个页面都必须有PageName-->
 	<title> <%= projectName %> - <%= modName %> </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"  />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -14,13 +15,7 @@
     <!--Page StyleSheets-->
     <link rel="stylesheet" href="./index.css"/>
     <!--Global JavaScripts-->
-    <script type="text/javascript" src="../../widgets/m/build/mini-full.js"></script>
-    <script type="text/javascript" src="../../widgets/m/build/base.js"></script>
-    <script type="text/javascript" src="../../widgets/m/build/juicer.js"></script>
-    <script type="text/javascript" src="../../widgets/m/build/ua.js"></script>
-    <script type="text/javascript" src="../../widgets/m/build/touch.js"></script>
-    <script type="text/javascript" src="../../widgets/m/build/anim.js"></script>
-    <script type="text/javascript" src="../../widgets/m/build/lang.js"></script>
+    <script type="text/javascript" src="../../widgets/m/build/mini-all.js"></script>
     <script type="text/javascript" src="../../widgets/jsbridge/index.js"></script>
     <script type="text/javascript" src="../../config.js"></script>
     <script type="text/javascript" src="../../map.js"></script>
@@ -42,6 +37,10 @@
 
 </body>
 </html>
+
+<!--
+	KISSY MINI 文档：http://gitlab.alibaba-inc.com/kissy/m/raw/master/docs/core.html 
+-->
 
 <!--
 	样式代码参照DPL：

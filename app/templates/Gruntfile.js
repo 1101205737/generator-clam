@@ -113,8 +113,6 @@ module.exports = function (grunt) {
 				servlet: '?',
 				separator: ',',
 				charset: 'utf8',
-				startWeinre: false,                                  // 是否自动启动 weinre（H5项目默认为 true）
-				weinrePort: 8091,                                   // weinre 运行端口号
 				proxy: {                                            // 代理配置
 					interface: {                                    // 接口 mock 配置
 						hosts: [/*'api.m.taobao.com', 'api.waptest.taobao.com', 'api.test.taobao.com'*/],   // 接口 mock 要代理的主机名
@@ -132,7 +130,8 @@ module.exports = function (grunt) {
 		// 编译LESS为CSS https://github.com/gruntjs/grunt-contrib-less
 		less: {
 			options: {
-				strictImports: true
+				strictImports: true,
+				relativeUrls: true  // 将从其他 less 文件中导入的 url() 中相对路径图片引用替换为相对当前 less 文件路径
 			},
 			main: {
 				files: [
@@ -186,15 +185,15 @@ module.exports = function (grunt) {
 		// 监听JS、CSS、LESS文件的修改
 		watch: {
 			'js': {
-				files: [ '**/*.js' , '!**/*-min.js', '!build/**/*'],
+				files: [ '**/*.js' , '!**/*-min.js', '!build/**/*', '!**/node_modules/**/*'],
 				tasks: [ 'kmc', 'uglify' ]
 			},
 			'css': {
-				files: [ '**/*.css' , '!**/*-min.css', '!build/**/*'],
+				files: [ '**/*.css' , '!**/*-min.css', '!build/**/*', '!**/node_modules/**/*'],
 				tasks: [ 'copy', 'cssmin' ]
 			},
 			'less': {
-				files: [ '**/*.less', '!**/*-min.less', '!build/**/*'],
+				files: [ '**/*.less', '!**/*-min.less', '!build/**/*', '!**/node_modules/**/*'],
 				tasks: ['less', 'cssmin']
 			}
 		},

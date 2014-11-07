@@ -6,7 +6,6 @@
  * http://cnpmjs.org/package/generator-clam
  */
 var path = require('path'),
-	tmsid = 0,
 	clamUtil = require('clam-util'),
 	exec = require('child_process').exec;
 
@@ -37,6 +36,17 @@ module.exports = function (grunt) {
 		//.concat(source_files.scss || [])
 		.concat(source_files.php || [])
 		.concat(source_files.swf || []);
+
+	var watch_files = [
+		'src/**/*.js',
+		'src/**/*.css',
+		'src/**/*.less',
+		'src/**/*.php',
+		'src/**/*.html',
+		'src/**/*.htm',
+		'src/**/*.scss',
+		'!src/**/node_modules/**/*',
+		'!src/**/build/**/*'];
 
 	// -------------------------------------------------------------
 	// 任务配置
@@ -178,16 +188,6 @@ module.exports = function (grunt) {
                     }
                 ]
             }
-		},
-
-		// HTML标签规范检查
-		htmlhint: {
-			options: {
-				htmlhintrc: '.htmlhintrc'
-			},
-			html: {
-				src: ['src/**/*.html']
-			}
 		},
 
 		// 静态合并HTML和抽取JS/CSS，解析juicer语法到vm/php
@@ -398,7 +398,8 @@ module.exports = function (grunt) {
 
 		less: {
 			options: {
-				strictImports: true
+				strictImports: true,
+				relativeUrls: true  // 将从其他 less 文件中导入的 url() 中相对路径图片引用替换为相对当前 less 文件路径
 			},
 			main: {
 				files: [
@@ -485,24 +486,26 @@ module.exports = function (grunt) {
 
 		// 监听JS、CSS、LESS文件的修改
 		watch: {
-			'all': {
+			'dump':{
 				options: {
 					livereload: true
 				},
-				files: ['src/**/*.js',
-					'src/**/*.css',
-					'src/**/*.less',
-					'src/**/*.php',
-					'src/**/*.html',
-					'src/**/*.htm',
-					'src/**/*.scss',
-					'!src/**/node_modules/**/*',
-					'!src/**/build/**/*'],
-				tasks: [ 'exec_build' ]
-			},
-			'dump':{
 				files:['*.dump'],
 				tasks:['kmc:main']
+			},
+			'debug': {
+				options: {
+					livereload: true
+				},
+				files: watch_files,
+				tasks: ['build_debug']
+			},
+			'offline': {
+				options: {
+					livereload: true
+				},
+				files: watch_files,
+				tasks: ['build_offline']
 			}
 		},
 
@@ -636,6 +639,26 @@ module.exports = function (grunt) {
 				]
 			}
 		},
+
+		// dom 操作组件
+		domman: {
+			offline: {
+				options: {
+					//plugins: ['tms', 'offline'],        // 要启用的插件
+					//prior: ['offline']                // 优先调用的插件按序排列
+				},
+				files: [
+					{
+						expand: true,
+						cwd: 'build_offline/',
+						dest: 'build_offline/',
+						src: ['**/*.html']
+					}
+				]
+
+			}
+		},
+
 		replace: {
 			// 将资源文件引用域名替换为 g.assets.daily.taobao.net
 			daily: {
@@ -667,85 +690,7 @@ module.exports = function (grunt) {
 						expand: true,
 						cwd: 'build/',
 						dest: 'build/',
-						src: ['config.js','mods/**/*','pages/**/*']
-					}
-				]
-			},
-			// 离线包文件替换规则
-			offline:{
-				options: {
-					patterns: [
-						{
-							match:/<\/head>/,
-							replacement:[
-								'<!--added by clam {{-->\n',
-								'<meta name="aplus-offline" content="1">\n',
-								'<script src="../../widgets/wlog/build/aplus_wap.js"></script>\n',
-								'<script src="../../widgets/wlog/build/spm_wap.js"></script>\n',
-								'<script src="../../widgets/wlog/build/spmact_wap.js"></script>\n',
-								'<!--added by clam }}-->\n',
-								'</head>'
-							].join('')
-						},
-						{
-							match: /<!--HTTP:(.*):HTTP-->/g,
-							replacement: function(match, tms) {
-								var obj = {},
-									async;
-
-								if (tms) {
-									tms = tms.split(',');
-									obj.proxy = 'http://trip.taobao.com/market/trip/h5_offline_service.php';
-									obj.src = encodeURIComponent(tms[0].replace(/\?.*$/ig, ''));
-									obj.params = tms[0].match(/\?/) ? tms[0].replace(/^.*\?/ig, '') : '';
-									obj.charset = tms[1] || 'gbk';
-									async = !!obj.params.match(/async/);
-									if (async) {
-										obj.id = tmsid++;
-										return clamUtil.sub('<script id="tms_fragment_{id}">get_tms_fragment("{proxy}?src={src}", "{charset}", "tms_fragment_{id}");</script>', obj);
-									} else {
-										return clamUtil.sub('<script src="{proxy}?callback=handle_tms_fragment&src={src}" charset="{charset}"></script>', obj);
-									}
-								} else {
-									return match;
-								}
-							}
-						},
-						{
-							match: /<head>/,
-							replacement: [
-								'<head>\n',
-								'<!--{{ added by clam -->\n',
-								'<script>window.MT_CONFIG={offline:true};</script>\n',
-								'<script src="../../widgets/tms-offline-parser/index.js"></script>\n',
-								'<!--}} added by clam -->'
-							].join('')
-						}
-					]
-				},
-                files: [
-                    {
-                        expand: true, 
-                        cwd: 'build_offline/',
-                        dest: 'build_offline/',
-                        src: ['**/*.html']
-                    }
-                ]
-			}
-		},
-
-		// juicer 模板编译为 kissy 模块，文档：https://www.npmjs.org/package/grunt-tpl-compiler
-		tpl_compiler: {
-			options: {
-				ext: '-tpl'
-			},
-			main: {
-				files: [
-					{
-						expand: true,
-						cwd: 'src/',
-						src: ['**/*.tpl.html'],
-						dest: 'src/'
+						src: ['config.js','mods/**/*.js','pages/**/*.js']
 					}
 				]
 			}
@@ -763,19 +708,18 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-contrib-cssmin');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-kmc');
-	grunt.loadNpmTasks('grunt-mytps');
+	//grunt.loadNpmTasks('grunt-mytps');
 	grunt.loadNpmTasks('grunt-exec');
 	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-flexcombo');
 	grunt.loadNpmTasks('grunt-replace');
-	grunt.loadNpmTasks('grunt-htmlhint');
 	grunt.loadNpmTasks('grunt-combohtml');
 	grunt.loadNpmTasks('grunt-sass');
 	grunt.loadNpmTasks('grunt-tms');
-	grunt.loadNpmTasks('grunt-inline-assets');
-	grunt.loadNpmTasks('grunt-tpl-compiler');
+	//grunt.loadNpmTasks('grunt-inline-assets');
     grunt.loadNpmTasks('grunt-cacheinfo');
     grunt.loadNpmTasks('grunt-empty');
+	grunt.loadNpmTasks('grunt-domman');
 
 
 	// -------------------------------------------------------------
@@ -811,37 +755,73 @@ module.exports = function (grunt) {
 		});
 	});
 
-	// 启动offline调试时的本地服务
-	grunt.registerTask('offline', '开启offline离线包调试模式', function () {
-		task.run(['flexcombo:offline', 'watch:dump']);
-	});
-
-
 	// 启动Demo调试时的本地服务
 	grunt.registerTask('demo', '开启Demo调试模式', function () {
 		task.run(['flexcombo:demo', 'watch:dump']);
 	});
 
+
 	// 启动Debug调试时的本地服务
 	grunt.registerTask('debug', '开启debug模式', function () {
-		task.run(['flexcombo:debug', 'watch:all']);
+		task.run(['flexcombo:debug', 'watch:debug']);
 	});
+
+	grunt.registerTask('build_debug', '执行在线调试构建', function () {
+		task.run([
+			'copy:main',
+			'less',
+			'sass',
+			'kmc:main',
+			// 构建在线包
+			'combohtml:main',
+			'replace:main',
+			'uglify:main',
+			'cssmin:main'
+		]);
+	});
+
+
+	// 启动Offline调试时的本地服务
+	grunt.registerTask('offline', '开启offline离线包调试模式', function () {
+		task.run(['flexcombo:offline', 'watch:offline']);
+	});
+
+	grunt.registerTask('build_offline', '执行离线调试构建', function () {
+		task.run([
+			'build_debug',
+			// 构建离线包
+			'copy:offline',
+			'kmc:offline',
+			'empty',
+			'clean:offline_mods',
+			'clean:htmlFrag',
+			'clean:offline_noise',
+			'domman:offline',
+			'combohtml:offline',
+			'clean:offline_tms_html',
+			'uglify:offline',
+			'cssmin:offline',
+			'cacheinfo',
+			'exec:zip',
+			'copy:zip'
+		]);
+	});
+
 
 	// 替换build里的http://g.tbcdn.cn的引用为daily的引用
 	grunt.registerTask('daily', '替换域名引用到daily', function () {
 		task.run(['replace:daily']);
 	});
 
+
 	// 默认构建流程
 	grunt.registerTask('exec_build', '执行构建脚本', function () {
 		var actions = [
 			// 构建准备流程
-			//'htmlhint',
             'clean:build',
             'clean:offline',
 			'clean:map',
 			'clean:zip',
-			'tpl_compiler',
 			'copy:main',
 			'less',
 			'sass',
@@ -875,7 +855,7 @@ module.exports = function (grunt) {
 				'clean:offline_mods',
 				'clean:htmlFrag',
 				'clean:offline_noise',
-				'replace:offline',
+				'domman:offline',
 				'combohtml:offline',
 				'clean:offline_tms_html',
 				'uglify:offline',

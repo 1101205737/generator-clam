@@ -152,22 +152,9 @@ function fullfill(){
 	setTimeout(function(){
 		console.log('\n正在安装依赖资源文件, 稍等...');
 	},500);
-	exec('cd ' + wp + ';bower install mpi/tms-offline-parser;bower install mpi/jsbridge;bower install mpi/mpi_css;bower install mpi/wlog',
+	exec('cd ' + wp + ';bower install mpi/base;bower install mpi/mpi_css;',
 		function(err,stdout,stderr,cb){
 			showLog(err,stdout,stderr,cb);
-			setTimeout(function(){
-				console.log('\nInstalling KISSY-MINI, please wait...');
-			},500);
-			exec('cd '+ wp +';bower install kissy/m;', 
-				function(err,stdout,stderr,cb){
-					showLog(err,stdout,stderr,cb);
-					// 删除KISSY里的多余文件
-					['demo','tests','src','docs'].forEach(function(item){
-						rmdir(path.resolve(wp , 'kissy/'+item),function ( err, dirs, files ){
-							console.log(green('rm  '+ item + ' done!'));
-						});		
-					});
-				});
 		});
 }
 

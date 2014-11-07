@@ -30,12 +30,12 @@
         "grunt-empty":"",
         "grunt-exec": "",
         "grunt-flexcombo": "",
-		"grunt-htmlhint": "",
 		"grunt-combohtml":"",
 		"grunt-replace":"",
         "grunt-tms":"",
 	    "grunt-tpl-compiler":"",
-	    "grunt-inline-assets":""
+	    "grunt-inline-assets":"",
+        "grunt-domman":""
     },
 
     "dependencies": {}

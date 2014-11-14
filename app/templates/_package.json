@@ -35,7 +35,8 @@
         "grunt-tms":"",
 	    "grunt-tpl-compiler":"",
 	    "grunt-inline-assets":"",
-        "grunt-domman":""
+        "grunt-domman":"",
+        "matchdep":""
     },
 
     "dependencies": {}

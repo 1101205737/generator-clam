@@ -541,7 +541,7 @@ module.exports = function (grunt) {
                 command: 'cd build_offline/; zip -r9 ../build_offline.zip *; cd ../'
             },
 			build_alipay: {
-				command: 'hpm build'
+				command: 'hpm build -V <%= currentBranch %>'
 			}
 		},
 
@@ -718,25 +718,7 @@ module.exports = function (grunt) {
 	// -------------------------------------------------------------
 	// 载入模块
 	// -------------------------------------------------------------
-
-	grunt.loadNpmTasks('grunt-contrib-clean');
-	grunt.loadNpmTasks('grunt-contrib-uglify');
-	grunt.loadNpmTasks('grunt-contrib-less');
-	grunt.loadNpmTasks('grunt-contrib-cssmin');
-	grunt.loadNpmTasks('grunt-contrib-watch');
-	grunt.loadNpmTasks('grunt-kmc');
-	//grunt.loadNpmTasks('grunt-mytps');
-	grunt.loadNpmTasks('grunt-exec');
-	grunt.loadNpmTasks('grunt-contrib-copy');
-	grunt.loadNpmTasks('grunt-flexcombo');
-	grunt.loadNpmTasks('grunt-replace');
-	grunt.loadNpmTasks('grunt-combohtml');
-	grunt.loadNpmTasks('grunt-sass');
-	grunt.loadNpmTasks('grunt-tms');
-	//grunt.loadNpmTasks('grunt-inline-assets');
-    grunt.loadNpmTasks('grunt-cacheinfo');
-    grunt.loadNpmTasks('grunt-empty');
-	grunt.loadNpmTasks('grunt-domman');
+	require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
 
 	// -------------------------------------------------------------
@@ -892,9 +874,19 @@ module.exports = function (grunt) {
 		if(!type) {
 			task.run(['exec_build']);
 		} else if(type == 'alipay') {
-			console.log('请先确认本地已安装 hpm, 如未安装请先执行 `sudo tnpm install -g hpm` 安装');
-			console.log('并确认 hpmfile.json 中 `appid`、`version`、`launchParams.url` 等参数配置无误');
-			task.run(['exec:build_alipay']);
+
+			var done = this.async();
+
+			// 获取当前分支
+			clamUtil.getBranchVersion(function(version){
+				grunt.log.write(('当前分支：' + version).green);
+				grunt.config.set('currentBranch', version);
+
+				console.log('请先确认本地已安装 hpm, 如未安装请先执行 `sudo tnpm install -g hpm` 安装');
+				console.log('并确认 hpmfile.json 中 `appid`、`version`、`launchParams.url` 等参数配置无误');
+				task.run(['exec:build_alipay']);
+				done();
+			});
 		}
 	});
 

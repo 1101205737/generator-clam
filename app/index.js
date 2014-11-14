@@ -161,12 +161,6 @@ ClamGenerator.prototype.askFor = function askFor() {
 			message: 'Alipay Appid:',
 			default: '',
 			warning: ''
-		},
-		{
-			name   : 'aplipayVersion',
-			message: 'Alipay Version:',
-			default: '0.1',
-			warning: ''
 		}
 	];
 
@@ -201,7 +195,7 @@ ClamGenerator.prototype.askFor = function askFor() {
 
 		// alipay config
 		this.aplipayAppid = props.aplipayAppid;
-		this.aplipayVersion = props.aplipayVersion;
+		this.aplipayVersion = props.version;
 
 		if (this.srcDir) {
 			this.prompt([

@@ -468,6 +468,7 @@ Mock 数据可以直接被转换为 TMS 语法。配置和用法[参照grunt-tms
 - `grunt debug`:开启生产环境Debug模式
 - `grunt combohtml`:构建包含SSI的html，合并页面中的css和js，编译juicer模板为VM、php和TMS格式
 - `grunt build`:默认构建流程，在所有场景下均可执行
+- `grunt build:alipay`:构建面向支付宝钱包的离线包，请先安装 [hpm](http://web.npm.alibaba-inc.com/package/hpm)
 - `grunt awpp`:H5页面的发布
 - `grunt pub`:选择预发或者发布前端资源
 

@@ -97,6 +97,12 @@ ClamGenerator.prototype.askFor = function askFor() {
 			warning: ''
 		},
 		{
+			name   : 'projectDesc',
+			message: 'Description of Project?',
+			default: folderName,
+			warning: ''
+		},
+		{
 			name   : 'isH5',
 			message: 'is A H5 Project?',
 			default: 'Y/n',
@@ -149,6 +155,18 @@ ClamGenerator.prototype.askFor = function askFor() {
 			message: 'Version:',
 			default: '0.1.0',
 			warning: ''
+		},
+		{
+			name   : 'aplipayAppid',
+			message: 'Alipay Appid:',
+			default: '',
+			warning: ''
+		},
+		{
+			name   : 'aplipayVersion',
+			message: 'Alipay Version:',
+			default: '0.1',
+			warning: ''
 		}
 	];
 
@@ -156,7 +174,6 @@ ClamGenerator.prototype.askFor = function askFor() {
 	 * projectName：驼峰名称,比如 ProjectName
 	 * packageName：原目录名称，比如 project-name
 	 **/
-
 	this.prompt(prompts, function (err, props) {
 		if (err) {
 			return this.emit('error', err);
@@ -167,6 +184,7 @@ ClamGenerator.prototype.askFor = function askFor() {
 		md5.update(this.packageName);
 		this.packageNameMd5 = md5.digest('hex');;
 		this.projectName = parseMojoName(this.packageName); //ProjectName
+		this.packageDesc = props.packageDesc;
 		this.author = props.author;
 		this.email = props.email;
 		this.isH5 = (/^y/i).test(props.isH5) ? 'true':'false';
@@ -180,6 +198,10 @@ ClamGenerator.prototype.askFor = function askFor() {
 		this.combohtml = true;
 		this.srcPath = '../';
 		this.currentBranch = 'master';
+
+		// alipay config
+		this.aplipayAppid = props.aplipayAppid;
+		this.aplipayVersion = props.aplipayVersion;
 
 		if (this.srcDir) {
 			this.prompt([
@@ -245,6 +267,7 @@ ClamGenerator.prototype.app = function app() {
 	}
 	this.template('README.md');
 	this.template('make.sh');
+	this.template('hpmfile.json');
 	this.mkdir('doc');
 	this.mkdir('build');
 

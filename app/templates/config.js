@@ -1,5 +1,6 @@
 (function(){
     KISSY.config('tag', null);
+  	KISSY.Config.version = '@@version';
 
     // 通过URL注入版本：url?version=0.1.2
     var getVersion = function(){

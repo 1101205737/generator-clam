@@ -1,6 +1,6 @@
 {
     "name": "<%= packageName %>",
-    "desc": "description of your app",
+    "desc": "<%= packageDesc %>",
     "type": "clam",
 	"dirName":"<%= dirName %>",
 	"packageNameMd5":"<%= packageNameMd5 %>",

@@ -216,7 +216,7 @@ module.exports = function (grunt) {
 					//htmlProxy: '<%= abcpkg.htmlProxy %>',      // htmlProxy 配置，用于产出线上页面区块替换为本地模块页面
 					//htmlProxyDestDir: 'html-fragments',      // html 代理区块页面生成到的目标目录
 					meta : {
-						'pageid' : 'on181.<%= abcpkg.name%>/${path|regexp,"build/",""}'
+						'pageid' : '181on.<%= abcpkg.name%>/${path|regexp,"build/",""}'
 					}
 					
 				},
@@ -238,7 +238,7 @@ module.exports = function (grunt) {
 					mockFilter: true, // 是否过滤Demo中的JuicerMock
                     comboExt:'_combo',
 					meta : {
-						'pageid' : 'on181.<%= abcpkg.name%>/${path|regexp,"build_offline/",""}'
+						'pageid' : '181off.<%= abcpkg.name%>/${path|regexp,"build_offline/",""}'
 					}
                 },
                 files: [
@@ -293,11 +293,10 @@ module.exports = function (grunt) {
 						'dev.wapa.taobao.com',
 						'dev.m.taobao.com'
 					],
-					servlet: '?',
-					separator: ',',
-					charset: 'utf8',
-					startWeinre: isH5,                                  // 是否自动启动 weinre（H5项目默认为 true）
-					weinrePort: 8091,                                   // weinre 运行端口号
+				  	needHttps: false,				// 是否开启 HTTPS 请求监控，默认 false
+					livereload: false,				// 是否自动刷新，默认 false，可配置为 true 或期望 livereload 服务工作的端口号
+					startWeinre: isH5,              // 是否自动启动 weinre（H5项目默认为 true）
+					weinrePort: 8091,               // weinre 运行端口号
 					proxy: {                                            // 代理配置
 						interface: {                                    // 接口 mock 配置
 							hosts: [/*'api.m.taobao.com', 'api.waptest.taobao.com', 'api.test.taobao.com'*/],   // 接口 mock 要代理的主机名
@@ -329,11 +328,10 @@ module.exports = function (grunt) {
 						'dev.m.taobao.com',
 						'm.trip.taobao.com'
 					],
-					servlet: '?',
-					separator: ',',
-					charset: 'utf8',
-					startWeinre: isH5,
-					weinrePort: 8091,
+					livereload: false,				// 是否自动刷新，默认 false，可配置为 true 或期望 livereload 服务工作的端口号
+				  	needHttps: false,				// 是否开启 HTTPS 请求监控，默认 false
+					startWeinre: isH5,				// 是否自动启动 weinre（H5项目默认为 true）
+					weinrePort: 8091,				// weinre 运行端口号
 					proxy: {
 						interface: {
 							hosts: [/*'api.m.taobao.com', 'api.waptest.taobao.com', 'api.test.taobao.com'*/],
@@ -371,11 +369,10 @@ module.exports = function (grunt) {
 						'dev.wapa.taobao.com',
 						'h5.m.taobao.com'
 					],
-					servlet: '?',
-					separator: ',',
-					charset: 'utf8',
-					startWeinre: isH5,
-					weinrePort: 8091,
+					livereload: false,				// 是否自动刷新，默认 false，可配置为 true 或期望 livereload 服务工作的端口号
+				  	needHttps: false,				// 是否开启 HTTPS 请求监控，默认 false
+					startWeinre: isH5,				// 是否自动启动 weinre（H5项目默认为 true）
+					weinrePort: 8091,				// weinre 运行端口号
 					proxy: {
 						interface: {
 							hosts: ['api.m.taobao.com', 'api.waptest.taobao.com', 'api.test.taobao.com'],
@@ -542,7 +539,10 @@ module.exports = function (grunt) {
 			},
             zip: {
                 command: 'cd build_offline/; zip -r9 ../build_offline.zip *; cd ../'
-            }
+            },
+			build_alipay: {
+				command: 'hpm build'
+			}
 		},
 
 		// 将css文件中引用的本地图片上传CDN并替换url，默认不开启
@@ -642,10 +642,27 @@ module.exports = function (grunt) {
 
 		// dom 操作组件
 		domman: {
+			online: {
+				options: {
+					plugins: ['stat'],        						// 要启用的插件
+					//orderHead: [],                				// 要首先调用的插件
+					orderTail: ['stat']								// 最后调用的插件
+				},
+				files: [
+					{
+						expand: true,
+						cwd: 'build/',
+						dest: 'build/',
+						src: ['**/*.html']
+					}
+				]
+
+			},
 			offline: {
 				options: {
-					//plugins: ['tms', 'offline'],        // 要启用的插件
-					//prior: ['offline']                // 优先调用的插件按序排列
+					//plugins: ['tms', 'offline', 'stat'],        	// 要启用的插件
+					//orderHead: [],                				// 要首先调用的插件
+				  	orderTail: ['stat']								// 最后调用的插件
 				},
 				files: [
 					{
@@ -830,6 +847,7 @@ module.exports = function (grunt) {
 			'tms',
 			// 构建在线包
 			'combohtml:main',
+			'domman:online',
 			'replace:main',
             'uglify:main',
             'cssmin:main',
@@ -855,8 +873,8 @@ module.exports = function (grunt) {
 				'clean:offline_mods',
 				'clean:htmlFrag',
 				'clean:offline_noise',
-				'domman:offline',
 				'combohtml:offline',
+			  	'domman:offline',
 				'clean:offline_tms_html',
 				'uglify:offline',
 				'cssmin:offline',
@@ -869,7 +887,16 @@ module.exports = function (grunt) {
 	});
 
 	// 默认构建任务
-	grunt.registerTask('build', ['exec_build']);
+	grunt.registerTask('build', '构建', function (type) {
+
+		if(!type) {
+			task.run(['exec_build']);
+		} else if(type == 'alipay') {
+			console.log('请先确认本地已安装 hpm, 如未安装请先执行 `sudo tnpm install -g hpm` 安装');
+			console.log('并确认 hpmfile.json 中 `appid`、`version`、`launchParams.url` 等参数配置无误');
+			task.run(['exec:build_alipay']);
+		}
+	});
 
     // 压缩离线包
     grunt.registerTask('zip', ['exec:zip']);

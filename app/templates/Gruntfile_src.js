@@ -95,9 +95,12 @@ module.exports = function (grunt) {
 			'offline_mods':{
 				src : 'build_offline/mods/**/*.html'
 			},
-			'offline_noise':{
+			'offline_nouse':{
 				src: [
-					'build_offline/widgets/m/build/*.js', '!build_offline/widgets/m/build/mini-all.js'
+					'build_offline/widgets/base/qa-seed.js',
+					'build_offline/widgets/base/qa-seed-angular.js',
+					'build_offline/widgets/base/qa-seed-angular-wlog-tmsparser.js',
+					'build_offline/widgets/**/build/'
 				]
 			},
 			htmlFrag:{
@@ -795,8 +798,8 @@ module.exports = function (grunt) {
 			'clean:offline_mods',
 			'clean:htmlFrag',
 			'clean:offline_noise',
-			'domman:offline',
 			'combohtml:offline',
+			'domman:offline',
 			'clean:offline_tms_html',
 			'uglify:offline',
 			'cssmin:offline',

@@ -45,7 +45,7 @@
 	}
 
 	// 离线包模式 B
-	if (window.MT_CONFIG && window.MT_CONFIG.offline) {
+	if (window._$isOffline$_ || (window.MT_CONFIG && window.MT_CONFIG.offline)) {
         debug = true;
         publish = true;
         daily = false;

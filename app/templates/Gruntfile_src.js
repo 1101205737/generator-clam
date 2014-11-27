@@ -95,7 +95,7 @@ module.exports = function (grunt) {
 			'offline_mods':{
 				src : 'build_offline/mods/**/*.html'
 			},
-			'offline_nouse':{
+			'offline_noise':{
 				src: [
 					'build_offline/widgets/base/qa-seed.js',
 					'build_offline/widgets/base/qa-seed-angular.js',
@@ -557,6 +557,9 @@ module.exports = function (grunt) {
 			cwd: 'src',
 			all: source_files.css
 		},
+
+
+
 		// 得到本地资源列表
         cacheinfo:{
             options:{
@@ -617,12 +620,6 @@ module.exports = function (grunt) {
                         dest: 'build_offline/',
                         cwd:'build/'
                     },
-					{
-						expand:true,
-						src:['widgets/wlog/build/*.js'],
-						dest:'build_offline/',
-						cwd: 'src/'
-					},
 					{
                         expand:true,
                         src: ['pages/**/*.html','mods/**/*.html'],

@@ -80,7 +80,7 @@ module.exports = function (grunt) {
         src: 'src/map.js'
       },
       zip: {
-        src: 'build_offline.zip'
+        src: '<%= abcpkg.name%>.zip'
       },
       'main_tms_html': {
         src: 'build/pages/**/*.tms.html'
@@ -541,7 +541,7 @@ module.exports = function (grunt) {
         command: 'git checkout -b daily/<%= currentBranch %>'
       },
       zip: {
-        command: 'cd build_offline/; zip -r9 ../build_offline.zip *; cd ../'
+        command: 'cd build_offline/; zip -r9 ../<%= abcpkg.name%>.zip *; cd ../'
       },
       build_alipay: {
         command: 'hpm build -V <%= currentBranch %>'

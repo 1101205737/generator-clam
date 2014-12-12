@@ -7,12 +7,14 @@
  *		new <%= modName %>();
  * });
  */
-KISSY.add(function (S, require) {
+KISSY.add(function (S, Base, Node) {
 
 	"use strict";
-	
-	var Node = require('node');
-	var Base = require('base');
+
+	// grunt-kmb 暂不支持 CMD 规范构建
+	//var Node = require('node');
+	//var Base = require('base');
+
     var $ = Node.all;
 
 	var <%= modName %> = Base.extend({
@@ -32,4 +34,6 @@ KISSY.add(function (S, require) {
 
 	return <%= modName %>;
 	
+}, {
+	requires: ['base', 'node']
 });

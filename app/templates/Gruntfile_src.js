@@ -12,30 +12,7 @@ var path = require('path'),
 module.exports = function (grunt) {
   require('time-grunt')(grunt);
 
-  var file = grunt.file;
   var task = grunt.task;
-  var pathname = path.basename(__dirname);
-  // 根据后缀名采集 src 目录中所有文件列表
-  var source_files = clamUtil.walk('src',
-    clamUtil.NORMAL_FILTERS,
-    clamUtil.NORMAL_EXFILTERS);
-  var all_files = (source_files.css || [])
-    .concat(source_files.eot || [])
-    .concat(source_files.otf || [])
-    .concat(source_files.svg || [])
-    .concat(source_files.ttf || [])
-    .concat(source_files.woff || [])
-    .concat(source_files.html || [])
-    .concat(source_files.htm || [])
-    .concat(source_files.js || [])
-    //.concat(source_files.less || [])
-    .concat(source_files.css || [])
-    .concat(source_files.png || [])
-    .concat(source_files.gif || [])
-    .concat(source_files.jpg || [])
-    //.concat(source_files.scss || [])
-    .concat(source_files.php || [])
-    .concat(source_files.swf || []);
 
   var watch_files = [
     'src/**/*.js',
@@ -76,121 +53,79 @@ module.exports = function (grunt) {
       offline: {
         src: 'build_offline/*'
       },
-      map: {
-        src: 'src/map.js'
-      },
       zip: {
         src: '<%= abcpkg.name%>.zip'
-      },
-      'main_tms_html': {
-        src: 'build/pages/**/*.tms.html'
-      },
-      'offline_tms_html': {
-        src: [
-          'build_offline/pages/**/*.tms.html',
-          'build_offline/pages/*/mock.tms_combo.css',
-          'build_offline/pages/*/mock.tms_combo.js'
-        ]
-      },
-      'offline_mods': {
-        src: 'build_offline/mods/**/*.html'
-      },
-      'offline_noise': {
-        src: [
-          'build_offline/widgets/base/qa-seed.js',
-          'build_offline/widgets/base/qa-seed-angular.js',
-          'build_offline/widgets/base/qa-seed-angular-wlog-tmsparser.js',
-          'build_offline/widgets/**/build/'
-        ]
-      },
-      htmlFrag: {
-        src: 'build/html-fragments/'
       }
     },
 
     /**
-     * 将src目录中的KISSY文件做编译打包，仅解析合并，源文件不需要指定名称
-     *        KISSY.add(<名称留空>,function(S){});
-     *
-     *        @link https://github.com/daxingplay/grunt-kmc
-     *
-     * 如果只需要合并,使用这个配置
-     options: {
-                packages: [
-                    {
-                        name: '<%= abcpkg.name %>',
-                        path: '../',
-						charset:'utf-8'
-                    }
-                ],
-				map: [['<%= abcpkg.name %>/src/', '<%= abcpkg.name %>/']]
-            },
-     main: {
-                files: [
-                    {
-                        expand: true,
-						cwd: 'src/',
-                        src: source_files.js,
-                        dest: 'build/'
-                    }
-                ]
-            }
+     * KISSY 模块构建，文档：http://gitlab.alibaba-inc.com/trip-tools/grunt-kmb/tree/master
      */
-    kmc: {
-      // 在线包构建
-      main: {
+    kmb: {
+      options: {
+        pkgName: '<%= abcpkg.name %>',                      // 包名，默认取项目名
+        compress: true,                                     // 是否压缩
+        comboRequire: false,                                // 是否合并依赖模块
+        addModuleName: true,                                // 是否加上模块名
+        depFilePath: 'build/map.js',                        // 依赖分析文件路径，如不需要设为 null
+        alias: 'src/config.js',                             // 别名配置，为单个文件
+        // alias: ['src/alias.js', 'mods/abc/alias.js']     // 别名配置，为多个文件
+        // alias: {                                         // 别名配置，为键值对
+        //
+        //},
+        ext: '-min'                                         // 构建出的文件后缀名
+      },
+      online: {
         options: {
-          packages: [
-            {
-              name: '<%= abcpkg.name %>',
-              path: './src/',
-              charset: 'utf-8',
-              ignorePackageNameInUri: true
-            }
-          ],
-          depFilePath: 'build/map.js',// 生成的模块依赖表
-          comboOnly: true, // 不需要静态合并
-          fixModuleName: true, // 补全ModuleName
-          copyAssets: true, // 将文件搬运至目标目录
-          comboMap: true // 生成Map文件
+          // 在这里指定自己的配置项覆盖上面的通用配置
         },
         files: [
           {
-            src: ['src/**/*.js',
-              '!src/widgets/libs/seed.js',
-              '!src/libs/seed.js',
-              '!src/widgets/kissy/**/*.js',
-              '!src/widgets/m/**/*.js',
-              '!src/**/*/Gruntfile.js'],
-            dest: 'build/'
+            cwd: 'src',
+            src: ['**/*.js',
+              '!widgets/base/**/*',
+              '!**/*/Gruntfile.js',
+              '!**/build/**/*'],
+            dest: 'build/',
+            expand: true
           }
         ]
       },
-      // 离线包构建
-      offline: {
+      debug: {
         options: {
-          packages: [
-            {
-              name: '<%= abcpkg.name %>',
-              path: '../',
-              charset: 'utf-8',
-            },
-          ],
-          map: [['<%= abcpkg.name %>/src/', '<%= abcpkg.name %>/']],
-          comboOnly: false,
-          fixModuleName: false,
-          comboMap: false,
-          cleanUp: true
+          ext: ''
         },
         files: [
           {
-            expand: true,
-            cwd: 'src/pages',
-            src: '<%= abcpkg.kmcOffline %>',
-            dest: 'build_offline/pages'
+            cwd: 'src',
+            src: ['**/*.js',
+              '!widgets/base/**/*',
+              '!**/*/Gruntfile.js',
+              '!**/build/**/*'],
+            dest: 'build/',
+            expand: true
+          }
+        ]
+      },
+      offline: {
+        options: {
+          comboRequire: true,                                 // 是否合并依赖模块
+          depFilePath: null,                                  // 依赖分析文件路径，如不需要设为 null
+          ext: ''                                             // 构建出的文件后缀名
+        },
+        files: [
+          {
+            cwd: 'src',
+            src: ['**/*.js',
+              '!widgets/base/**/*',
+              '!**/*/Gruntfile.js',
+              '!**/build/**/*'],
+            dest: 'build_offline/',
+            expand: true
           }
         ]
       }
+
     },
 
     // 静态合并HTML和抽取JS/CSS，解析juicer语法到vm/php
@@ -226,7 +161,7 @@ module.exports = function (grunt) {
         files: [
           {
             expand: true,
-            cwd: 'build',
+            cwd: 'src',
             src: ['pages/**/*.html', '!pages/**/*.tms.html'],
             dest: 'build/'
           }
@@ -247,7 +182,7 @@ module.exports = function (grunt) {
         files: [
           {
             expand: true,
-            cwd: 'build_offline',
+            cwd: 'src',
             src: ['pages/**/*.html'],
             dest: 'build_offline/'
           }
@@ -440,8 +375,8 @@ module.exports = function (grunt) {
         files: [
           {
             expand: true,
-            cwd: 'build/',
-            src: ['**/*.js', '!**/*-min.js'],
+            cwd: 'src/',
+            src: ['config.js'],
             dest: 'build/',
             ext: '-min.js'
           }
@@ -452,7 +387,7 @@ module.exports = function (grunt) {
           {
             expand: true,
             cwd: 'build_offline/',
-            src: ['**/*.js', '!**/*-min.js'],
+            src: ['**/*_combo.js'],
             dest: 'build_offline/'
           }
         ]
@@ -491,7 +426,7 @@ module.exports = function (grunt) {
           livereload: true
         },
         files: ['*.dump'],
-        tasks: ['kmc:main']
+        tasks: ['kmb:online']
       },
       'debug': {
         options: {
@@ -555,9 +490,8 @@ module.exports = function (grunt) {
       },
       expand: true,
       cwd: 'src',
-      all: source_files.css
+      all: ['**/*.css', '!**/node_modules/**/*.css', '!**/build/**/*.css']
     },
-
 
     // 得到本地资源列表
     cacheinfo: {
@@ -567,63 +501,38 @@ module.exports = function (grunt) {
         dest: "build_offline/cache_info.json"
       }
     },
-    // 清空map.js文件
-    empty: {
-      files: [
-        'build_offline/map.js'
-      ]
-    },
+    // 拷贝文件
     // 拷贝文件
     copy: {
       main: {
         files: [
           {
-            expand: true,
-            src: all_files.concat([
-              //'!**/build/**/*',
-              '!**/demo/**/*',
-              '!**/docs/**/*',
-              '!**/guide/**/*',
-              '!**/img/**/*',
-              '!**/image/**/*',
-              '!**/tests/**/*',
-              '!**/src/**/*',
-              '!**/doc/**/*'
-            ]),
-            dest: 'build/',
-            cwd: 'src/',
-            filter: 'isFile'
+            src: 'src/widgets/base/build/qa-seed-min.js',
+            dest: 'build/widgets/base/qa-seed-min.js'
+          },
+          {
+            cwd: 'src',
+            src: ['**/*.css'],
+            dest: 'build',
+            expand: true
           }
         ]
       },
-      map: {
+      debug: {
         files: [
           {
-            expand: true,
-            src: 'map.js',
-            dest: 'src/',
-            cwd: 'build/'
+            cwd: 'src',
+            src: ['widgets/base/qa-seed.js', 'config.js'],
+            dest: 'build',
+            expand: true
           }
         ]
       },
       offline: {
         files: [
           {
-            expand: true,
-            src: [
-              '**/*.js', '**/*.css',
-              '!**/*-min.js', '!**/*-min.css',
-              '!**/demo/**/*.js', '!**/demo/**/*.css',
-              '!**/docs/**/*.js', '!**/docs/**/*.css'
-            ],
-            dest: 'build_offline/',
-            cwd: 'build/'
-          },
-          {
-            expand: true,
-            src: ['pages/**/*.html', 'mods/**/*.html'],
-            dest: 'build_offline/',
-            cwd: 'src/'
+            src: 'src/widgets/base/build/qa-seed-wlog-tmsparser-min.js',
+            dest: 'build_offline/widgets/base/qa-seed-wlog-tmsparser.js'
           }
         ]
       },
@@ -631,7 +540,7 @@ module.exports = function (grunt) {
         files: [
           {
             expand: true,
-            src: 'build_offline.zip',
+            src: '<%= abcpkg.name%>.zip',
             dest: 'build/',
             cwd: './'
           }
@@ -761,15 +670,16 @@ module.exports = function (grunt) {
 
   // 启动Debug调试时的本地服务
   grunt.registerTask('debug', '开启debug模式', function () {
-    task.run(['flexcombo:debug', 'watch:debug']);
+    task.run(['build_debug', 'flexcombo:debug', 'watch:debug']);
   });
 
   grunt.registerTask('build_debug', '执行在线调试构建', function () {
     task.run([
+      'copy:debug',
       'copy:main',
       'less',
       'sass',
-      'kmc:main',
+      'kmb:debug',
       // 构建在线包
       'combohtml:main',
       'replace:main',
@@ -781,7 +691,7 @@ module.exports = function (grunt) {
 
   // 启动Offline调试时的本地服务
   grunt.registerTask('offline', '开启offline离线包调试模式', function () {
-    task.run(['flexcombo:offline', 'watch:offline']);
+    task.run(['build_offline', 'flexcombo:offline', 'watch:offline']);
   });
 
   grunt.registerTask('build_offline', '执行离线调试构建', function () {
@@ -789,15 +699,10 @@ module.exports = function (grunt) {
       'build_debug',
       // 构建离线包
       'copy:offline',
-      'kmc:offline',
-      'empty',
-      'clean:offline_mods',
-      'clean:htmlFrag',
-      'clean:offline_noise',
+      'kmb:offline',
       'combohtml:offline',
       'domman:offline',
-      'clean:offline_tms_html',
-      'uglify:offline',
+      //'uglify:offline',
       'cssmin:offline',
       'cacheinfo',
       'exec:zip',
@@ -818,21 +723,18 @@ module.exports = function (grunt) {
       // 构建准备流程
       'clean:build',
       'clean:offline',
-      'clean:map',
       'clean:zip',
-      'copy:main',
       'less',
       'sass',
-      'kmc:main',
-      'copy:map',
+      'kmb:online',
+      'copy:main',
       'tms',
       // 构建在线包
       'combohtml:main',
       'domman:online',
       'replace:main',
       'uglify:main',
-      'cssmin:main',
-      'clean:main_tms_html'
+      'cssmin:main'
     ];
     // TIP,2014-8-15：
     // 根据规范，H5项目应当把所有的assets都inline进来
@@ -848,15 +750,10 @@ module.exports = function (grunt) {
     if (isH5) {
       actions = actions.concat([
         // 构建离线包
+        'kmb:offline',
         'copy:offline',
-        'kmc:offline',
-        'empty',
-        'clean:offline_mods',
-        'clean:htmlFrag',
-        'clean:offline_noise',
         'combohtml:offline',
         'domman:offline',
-        'clean:offline_tms_html',
         'uglify:offline',
         'cssmin:offline',
         'cacheinfo',

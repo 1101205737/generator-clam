@@ -291,8 +291,31 @@ Clam 工具提供一套本地调试环境，这套环境跟随代码一同携带
 
 filter中的key是一个字符串形式的正则表达式，value是被替换的字符串
 
+### 九，去啊 App（`>=5.1.1`） 中，H5 离线包推包调试
 
-### 九，轻便的 Mock：Juicer Mock 写法
+针对ios设备需要首先生成zip文件，在项目根目录下执行
+
+	sh ./make.sh
+
+会在项目根目录生成类似`7d39b577c3bd29f13930234ae45f28f7.zip`的文件
+
+#### 1. IOS 设备导入zip包
+
+安装去啊App，链接到电脑，用iTools打开去啊App的设备目录，找到`library/data/resource`目录，导入zip文件
+
+![](http://gtms01.alicdn.com/tps/i1/TB1KizvGVXXXXb4XVXXIPDA6XXX-652-446.png)
+
+#### 2. Andoird 设备导入本地文件
+
+Android不需要导入zip包，直接将`build_offline`里的文件覆盖Android里源文件即可，需要一台root权限的Android手机，链接到电脑，电脑安装好`adb`
+
+在项目根目录下执行
+
+	sh ./make.sh
+
+导入完成
+
+### 十，轻便的 Mock：Juicer Mock 写法
 
 > Clam的本地服务是基于[flex-combo](https://www.npmjs.org/package/grunt-flexcombo)来实现的，flexcombo支持Juicer Mock的语法来写带有数据的模板
 
@@ -334,17 +357,17 @@ filter中的key是一个字符串形式的正则表达式，value是被替换的
 
 即，数据和juicer模板混合输出了正确的结果。如果源文件中存在Mock数据字段`<!--#def ... -->`，则服务将会解析文件中的juicer模板
 
-### 十，Clam 项目中的 HTML 文件引用
+### 十一，Clam 项目中的 HTML 文件引用
 
 本地服务支持标准SSI（[Server Side Include](http://man.chinaunix.net/newsoft/ApacheManual/howto/ssi.html)）。
 
-	<!--#include path="../src/file-path.html" -->
+	<!--#include virtual="../src/file-path.html" -->
 
 引用线上文件可以直接写线上地址即可
 
 	<!--#include virtual="http://www.taobao.com" -->
 
-### 十一，TMS 标签的引用
+### 十二，TMS 标签的引用
 
 根据AWP规范，HTML页面中可以通过这种标示来引用外部静态文件
 
@@ -358,7 +381,7 @@ AWP平台和Clam自带的本地服务都支持这种解析
 
 > 需要注意的是，H5 项目的离线包的构建，会将这种格式的引用做过滤，[详情阅读这里](http://gitlab.alibaba-inc.com/mpi/tms-offline-parser/tree/master)
 
-### 十二，flexCombo 如何映射本地 HTML 片段
+### 十三，flexCombo 如何映射本地 HTML 片段
 
 我们经常使用 Fiddler 和 Charles 工具把线上 URL 映射到本地资源，那么，可否将线上页面里的一段 HTML 片段映射为本地文件呢？FlexCombo 就可以做到。
 
@@ -391,7 +414,7 @@ AWP平台和Clam自带的本地服务都支持这种解析
 
 这种模式非常有用，特别对于跨团队协作、高模块化的项目中尤其有用，比如在淘宝首页便民中心，便民中心的代码就可以被拆出来，以一个HTML片段（非整个项目）作为一个独立的项目，Clam 工具的这个特性将提供非常方便的调试入口
 
-### 十三，组件代码的安装
+### 十四，组件代码的安装
 
 如果要使用现成的组件，可以通过`bower`命令来安装，比如要使用[calendar](http://gitlab.alibaba-inc.com/mpi/calendar)组件，则需要在`src/widgets`目录中执行：
 
@@ -399,7 +422,7 @@ AWP平台和Clam自带的本地服务都支持这种解析
 
 即可
 
-### 十四，其他重要资料
+### 十五，其他重要资料
 
 每个项目的配置信息存放在`abc.json`中，组件代码仓库存放在[pi](http://pi.taobao.net)中。组件源码在（[mpi](http://gitlab.alibaba-inc.com/groups/mpi)和[tpi](http://gitlab.alibaba-inc.com/groups/tpi)中）。
 
@@ -432,11 +455,11 @@ AWP平台和Clam自带的本地服务都支持这种解析
 1. [AWPP 发布工具使用](http://groups.alidemo.cn/trip-tools/clam-doc/intro/awpp.html)
 1. [generator-clam 工具手册（内部使用）](http://groups.alidemo.cn/trip-tools/clam-doc/index.html)
 
-### 十五，Q & A
+### 十六，Q & A
 
 [参照这里](https://github.com/jayli/generator-clam/blob/master/userguide.md#q--a)
 
-### 十六，更新记录
+### 十七，更新记录
 
 1. 0.1.x
 	1. 脚手架基础功能，代码片段整理

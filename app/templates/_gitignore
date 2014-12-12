@@ -11,3 +11,4 @@ npm-debug.log
 .sass-cache/
 .project
 mods/.sass-cache/
+*.zip

@@ -682,8 +682,8 @@ module.exports = function (grunt) {
       'kmb:debug',
       // 构建在线包
       'combohtml:main',
-      'replace:main',
       'uglify:main',
+      'replace:main',
       'cssmin:main'
     ]);
   });
@@ -732,8 +732,8 @@ module.exports = function (grunt) {
       // 构建在线包
       'combohtml:main',
       'domman:online',
-      'replace:main',
       'uglify:main',
+      'replace:main',
       'cssmin:main'
     ];
     // TIP,2014-8-15：

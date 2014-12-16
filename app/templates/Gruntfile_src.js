@@ -67,7 +67,7 @@ module.exports = function (grunt) {
         compress: true,                                     // 是否压缩
         comboRequire: false,                                // 是否合并依赖模块
         addModuleName: true,                                // 是否加上模块名
-        depFilePath: 'build/map.js',                        // 依赖分析文件路径，如不需要设为 null
+        depFilePath: 'build/map-min.js',                    // 依赖分析文件路径，如不需要设为 null
         alias: 'src/config.js',                             // 别名配置，为单个文件
         // alias: ['src/alias.js', 'mods/abc/alias.js']     // 别名配置，为多个文件
         // alias: {                                         // 别名配置，为键值对
@@ -93,6 +93,7 @@ module.exports = function (grunt) {
       },
       debug: {
         options: {
+          depFilePath: 'build/map.js',                        // 调试时 flexcombo 会找非 -min 代码
           ext: ''
         },
         files: [

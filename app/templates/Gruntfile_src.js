@@ -100,6 +100,7 @@ module.exports = function (grunt) {
       },
       debug: {
         options: {
+          compress: false,
           depFilePath: 'build/map.js',                        // 调试时 flexcombo 会找非 -min 代码
           ext: ''
         },

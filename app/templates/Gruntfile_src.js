@@ -348,6 +348,17 @@ module.exports = function (grunt) {
         strictImports: true,
         relativeUrls: true  // 将从其他 less 文件中导入的 url() 中相对路径图片引用替换为相对当前 less 文件路径
       },
+      dev: {
+        files: [
+          {
+            expand: true,
+            cwd: 'src/',
+            src: ['**/*.less', '!**/build/**/*.less'],
+            dest: 'src/',
+            ext: '.css'
+          }
+        ]
+      },
       main: {
         files: [
           {
@@ -373,6 +384,17 @@ module.exports = function (grunt) {
     },
 
     sass: {
+      dev: {
+        files: [
+          {
+            expand: true,
+            cwd: 'src/',
+            src: ['**/*.scss', '!**/build/**/*.scss'],
+            dest: 'src/',
+            ext: '.css'
+          }
+        ]
+      },
       main: {
         files: [
           {
@@ -459,8 +481,8 @@ module.exports = function (grunt) {
         options: {
           livereload: true
         },
-        files: ['*.dump'],
-        tasks: ['kmb:online']
+        files: ['*.dump', 'src/**/*.less', 'src/**/*.scss'],
+        tasks: ['less:dev', 'sass:dev']
       },
       'debug': {
         options: {

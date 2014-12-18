@@ -36,7 +36,7 @@ module.exports = function (grunt) {
   var base = 'http://g.tbcdn.cn';
   var Gpkg = grunt.file.readJSON('abc.json');
   // 是否是 H5 项目
-  var isH5 = (Gpkg.isH5 === "true");
+  var isH5 = Gpkg.isH5;
   grunt.initConfig({
 
     // 从 abc.json 中读取配置项
@@ -52,6 +52,13 @@ module.exports = function (grunt) {
       },
       offline: {
         src: 'build_offline/*'
+      },
+      offline_build: {
+        src: [
+          'build_offline/config.js',
+          'build_offline/pages/**/*.css',
+          '!build_offline/pages/**/*_combo.css'
+        ]
       },
       zip: {
         src: '<%= abcpkg.name%>.zip'
@@ -170,6 +177,10 @@ module.exports = function (grunt) {
       },
       offline: {
         options: {
+          replacement: {
+            from: /src\//,
+            to: 'build_offline/'
+          },
           comboJS: true,
           comboCSS: true,
           convert2vm: false,
@@ -342,8 +353,19 @@ module.exports = function (grunt) {
           {
             expand: true,
             cwd: 'src/',
-            src: ['**/*.less'],
+            src: ['**/*.less', '!**/build/**/*.less'],
             dest: 'build/',
+            ext: '.css'
+          }
+        ]
+      },
+      offline: {
+        files: [
+          {
+            expand: true,
+            cwd: 'src/',
+            src: ['**/*.less', '!widgets/**/*.less', '!**/build/**/*.less'],
+            dest: 'build_offline/',
             ext: '.css'
           }
         ]
@@ -351,13 +373,24 @@ module.exports = function (grunt) {
     },
 
     sass: {
-      dist: {
+      main: {
         files: [
           {
             expand: true,
             cwd: 'src/',
-            src: ['**/*.scss'],
+            src: ['**/*.scss', '!**/build/**/*.scss'],
             dest: 'build/',
+            ext: '.css'
+          }
+        ]
+      },
+      offline: {
+        files: [
+          {
+            expand: true,
+            cwd: 'src/',
+            src: ['**/*.scss', '!widgets/**/*.scss', '!**/build/**/*.scss'],
+            dest: 'build_offline/',
             ext: '.css'
           }
         ]
@@ -414,7 +447,7 @@ module.exports = function (grunt) {
             expand: true,
             cwd: 'build_offline/',
             src: ['**/*.css', '!**/*-min.css'],
-            dest: 'build_offline/',
+            dest: 'build_offline/'
           }
         ]
       }
@@ -503,7 +536,6 @@ module.exports = function (grunt) {
       }
     },
     // 拷贝文件
-    // 拷贝文件
     copy: {
       main: {
         files: [
@@ -534,6 +566,10 @@ module.exports = function (grunt) {
           {
             src: 'src/widgets/base/build/qa-seed-wlog-tmsparser-min.js',
             dest: 'build_offline/widgets/base/qa-seed-wlog-tmsparser.js'
+          },
+          {
+            src: 'src/config.js',
+            dest: 'build_offline/config.js'
           }
         ]
       },
@@ -549,7 +585,7 @@ module.exports = function (grunt) {
       }
     },
 
-    // dom 操作组件
+    // dom 操作插件集
     domman: {
       online: {
         options: {
@@ -570,8 +606,8 @@ module.exports = function (grunt) {
       offline: {
         options: {
           plugins: ['tms', 'offline', 'stat', 'load'],        	// 要启用的插件
-          //orderHead: [],                				// 要首先调用的插件
-          orderTail: ['stat']								// 最后调用的插件
+          //orderHead: [],                				              // 要首先调用的插件
+          orderTail: ['stat']								                    // 最后调用的插件
         },
         files: [
           {
@@ -616,6 +652,22 @@ module.exports = function (grunt) {
             expand: true,
             cwd: 'build/',
             dest: 'build/',
+            src: ['config.js', 'mods/**/*.js', 'pages/**/*.js']
+          }
+        ]
+      },
+      offline: {
+        options: {
+          variables: {
+            'version': '<%= abcpkg.version %>'
+          },
+          prefix: '@@'
+        },
+        files: [
+          {
+            expand: true,
+            cwd: 'build_offline/',
+            dest: 'build_offline/',
             src: ['config.js', 'mods/**/*.js', 'pages/**/*.js']
           }
         ]
@@ -678,8 +730,8 @@ module.exports = function (grunt) {
     task.run([
       'copy:debug',
       'copy:main',
-      'less',
-      'sass',
+      'less:main',
+      'sass:main',
       'kmb:debug',
       // 构建在线包
       'combohtml:main',
@@ -700,7 +752,10 @@ module.exports = function (grunt) {
       'build_debug',
       // 构建离线包
       'copy:offline',
+      'replace:offline',
       'kmb:offline',
+      'less:offline',
+      'sass:offline',
       'combohtml:offline',
       'domman:offline',
       //'uglify:offline',
@@ -725,8 +780,8 @@ module.exports = function (grunt) {
       'clean:build',
       'clean:offline',
       'clean:zip',
-      'less',
-      'sass',
+      'less:main',
+      'sass:main',
       'kmb:online',
       'copy:main',
       'tms',
@@ -753,10 +808,14 @@ module.exports = function (grunt) {
         // 构建离线包
         'kmb:offline',
         'copy:offline',
+        'replace:offline',
+        'less:offline',
+        'sass:offline',
         'combohtml:offline',
         'domman:offline',
         'uglify:offline',
         'cssmin:offline',
+        'clean:offline_build',
         'cacheinfo',
         'exec:zip',
         'copy:zip'

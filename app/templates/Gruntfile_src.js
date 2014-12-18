@@ -674,7 +674,7 @@ module.exports = function (grunt) {
             expand: true,
             cwd: 'build/',
             dest: 'build/',
-            src: ['config.js', 'mods/**/*.js', 'pages/**/*.js']
+            src: ['config.js', 'config-min.js', 'mods/**/*.js', 'pages/**/*.js']
           }
         ]
       },

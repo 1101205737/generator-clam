@@ -478,24 +478,18 @@ module.exports = function (grunt) {
 
     // 监听JS、CSS、LESS文件的修改
     watch: {
-      'dump': {
-        options: {
+      options: {
           livereload: true
-        },
-        files: ['*.dump', 'src/**/*.less', 'src/**/*.scss'],
+      },
+      'demo': {
+        files: ['src/**/*.less', 'src/**/*.scss'],
         tasks: ['less:dev', 'sass:dev']
       },
       'debug': {
-        options: {
-          livereload: true
-        },
         files: watch_files,
         tasks: ['build_debug']
       },
       'offline': {
-        options: {
-          livereload: true
-        },
         files: watch_files,
         tasks: ['build_offline']
       }
@@ -740,16 +734,16 @@ module.exports = function (grunt) {
 
   // 启动Demo调试时的本地服务
   grunt.registerTask('demo', '开启Demo调试模式', function () {
-    task.run(['flexcombo:demo', 'watch:dump']);
+    task.run(['flexcombo:demo', 'watch:demo']);
   });
 
 
   // 启动Debug调试时的本地服务
   grunt.registerTask('debug', '开启debug模式', function () {
-    task.run(['build_debug', 'flexcombo:debug', 'watch:debug']);
+    task.run(['build_online_debug', 'flexcombo:debug', 'watch:debug']);
   });
 
-  grunt.registerTask('build_debug', '执行在线调试构建', function () {
+  grunt.registerTask('build_online_debug', '执行在线调试构建', function () {
     task.run([
       'copy:debug',
       'copy:main',
@@ -767,12 +761,11 @@ module.exports = function (grunt) {
 
   // 启动Offline调试时的本地服务
   grunt.registerTask('offline', '开启offline离线包调试模式', function () {
-    task.run(['build_offline', 'flexcombo:offline', 'watch:offline']);
+    task.run(['build_offline_debug', 'flexcombo:offline', 'watch:offline']);
   });
 
-  grunt.registerTask('build_offline', '执行离线调试构建', function () {
+  grunt.registerTask('build_offline_debug', '执行离线调试构建', function () {
     task.run([
-      'build_debug',
       // 构建离线包
       'copy:offline',
       'replace:offline',

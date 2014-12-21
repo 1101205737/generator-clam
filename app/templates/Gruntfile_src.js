@@ -98,24 +98,6 @@ module.exports = function (grunt) {
           }
         ]
       },
-      debug: {
-        options: {
-          compress: false,
-          depFilePath: 'build/map.js',                        // 调试时 flexcombo 会找非 -min 代码
-          ext: ''
-        },
-        files: [
-          {
-            cwd: 'src',
-            src: ['**/*.js',
-              '!widgets/base/**/*',
-              '!**/*/Gruntfile.js',
-              '!**/build/**/*'],
-            dest: 'build/',
-            expand: true
-          }
-        ]
-      },
       offline: {
         options: {
           comboRequire: true,                                 // 是否合并依赖模块
@@ -740,6 +722,15 @@ module.exports = function (grunt) {
 
   // 启动Debug调试时的本地服务
   grunt.registerTask('debug', '开启debug模式', function () {
+
+    var configMap = {
+      compress: false,                  // 不压缩代码，方便调试，加速构建
+      ext: '',                          // 调试时 flexcombo 会找非 -min 代码
+      depFilePath: 'build/map.js'       // 同上
+    };
+    Object.keys(configMap).forEach(function(key){
+      grunt.config.set('kmb.online.options.' + key, configMap[key]);
+    });
     task.run(['build_online_debug', 'flexcombo:debug', 'watch:debug']);
   });
 
@@ -749,7 +740,7 @@ module.exports = function (grunt) {
       'copy:main',
       'less:main',
       'sass:main',
-      'kmb:debug',
+      'kmb:online',
       // 构建在线包
       'combohtml:main',
       'uglify:main',
@@ -761,6 +752,10 @@ module.exports = function (grunt) {
 
   // 启动Offline调试时的本地服务
   grunt.registerTask('offline', '开启offline离线包调试模式', function () {
+
+    // 离线包调试模式，不压缩代码，加快构建
+    grunt.config.set('kmb.offline.options.compress', false);
+
     task.run(['build_offline_debug', 'flexcombo:offline', 'watch:offline']);
   });
 

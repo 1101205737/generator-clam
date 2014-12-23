@@ -62,6 +62,7 @@ module.exports = function (grunt) {
       offline_build: {
         src: [
           'build_offline/config.js',
+          'build_offline/mods/',
           'build_offline/pages/**/*.css',
           '!build_offline/pages/**/*_combo.css'
         ]
@@ -160,7 +161,10 @@ module.exports = function (grunt) {
       },
       offline: {
         options: {
-          replacement: null,
+          replacement: {
+            from: /src\//,
+            to: 'build_offline/'
+          },
           comboJS: true,
           comboCSS: true,
           convert2vm: false,
@@ -777,12 +781,12 @@ module.exports = function (grunt) {
     var actions = [
       // 构建准备流程
       'clean:build',
+      //'tms',
+      // 构建在线包
+      'copy:main',
       'less:main',
       'sass:main',
       'kmb:online',
-      'copy:main',
-      'tms',
-      // 构建在线包
       'combohtml:main',
       'domman:online',
       'uglify:main',
@@ -804,16 +808,16 @@ module.exports = function (grunt) {
       actions = actions.concat([
         // 构建离线包
         'clean:offline',
-        'kmb:offline',
         'copy:offline',
-        'replace:offline',
         'less:offline',
         'sass:offline',
+        'kmb:offline',
+        'replace:offline',
         'combohtml:offline',
         'domman:offline',
-        'replace:offline',
         'uglify:offline',
         'cssmin:offline',
+        'replace:offline',
         'clean:offline_build',
         'cacheinfo',
         'exec:zip'

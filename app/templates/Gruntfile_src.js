@@ -59,9 +59,6 @@ module.exports = function (grunt) {
           'build_offline/pages/**/*.css',
           '!build_offline/pages/**/*_combo.css'
         ]
-      },
-      zip: {
-        src: '<%= abcpkg.name%>.zip'
       }
     },
 
@@ -473,7 +470,7 @@ module.exports = function (grunt) {
       },
       'offline': {
         files: watch_files,
-        tasks: ['build_offline']
+        tasks: ['build_offline_debug']
       }
     },
 
@@ -509,7 +506,7 @@ module.exports = function (grunt) {
         command: 'git checkout -b daily/<%= currentBranch %>'
       },
       zip: {
-        command: 'cd build_offline/; zip -r9 ../<%= abcpkg.name%>.zip *; cd ../'
+        command: 'cd build_offline/; zip -P <%= abcpkg.zipPassWord %> -r9 ../build/<%= abcpkg.packageNameMd5 %>.zip *; cd ../'
       },
       build_alipay: {
         command: 'hpm build -V <%= currentBranch %>'
@@ -569,16 +566,6 @@ module.exports = function (grunt) {
           {
             src: 'src/config.js',
             dest: 'build_offline/config.js'
-          }
-        ]
-      },
-      zip: {
-        files: [
-          {
-            expand: true,
-            src: '<%= abcpkg.name%>.zip',
-            dest: 'build/',
-            cwd: './'
           }
         ]
       }
@@ -723,6 +710,11 @@ module.exports = function (grunt) {
   // 启动Debug调试时的本地服务
   grunt.registerTask('debug', '开启debug模式', function () {
 
+    task.run(['build_online_debug', 'flexcombo:debug', 'watch:debug']);
+  });
+
+  grunt.registerTask('build_online_debug', '执行在线调试构建', function () {
+	  
     var configMap = {
       compress: false,                  // 不压缩代码，方便调试，加速构建
       ext: '',                          // 调试时 flexcombo 会找非 -min 代码
@@ -731,10 +723,7 @@ module.exports = function (grunt) {
     Object.keys(configMap).forEach(function(key){
       grunt.config.set('kmb.online.options.' + key, configMap[key]);
     });
-    task.run(['build_online_debug', 'flexcombo:debug', 'watch:debug']);
-  });
-
-  grunt.registerTask('build_online_debug', '执行在线调试构建', function () {
+	
     task.run([
       'copy:debug',
       'copy:main',
@@ -753,13 +742,14 @@ module.exports = function (grunt) {
   // 启动Offline调试时的本地服务
   grunt.registerTask('offline', '开启offline离线包调试模式', function () {
 
-    // 离线包调试模式，不压缩代码，加快构建
-    grunt.config.set('kmb.offline.options.compress', false);
-
     task.run(['build_offline_debug', 'flexcombo:offline', 'watch:offline']);
   });
 
   grunt.registerTask('build_offline_debug', '执行离线调试构建', function () {
+
+    // 离线包调试模式，不压缩代码，加快构建
+    grunt.config.set('kmb.offline.options.compress', false);
+	
     task.run([
       // 构建离线包
       'copy:offline',
@@ -790,7 +780,7 @@ module.exports = function (grunt) {
       // 构建准备流程
       'clean:build',
       'clean:offline',
-      'clean:zip',
+      //'clean:zip',
       'less:main',
       'sass:main',
       'kmb:online',

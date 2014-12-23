@@ -445,7 +445,7 @@ AWP平台和Clam自带的本地服务都支持这种解析
 
 1. [mpiCss](http://groups.alidemo.cn/trip/h5-ui-component/build/pages/template/index.html)
 1. [kissy](http://docs.kissyui.com)
-1. [kissy-Mini](http://m.kissyui.com)
+1. [kissy-Mini](http://gitlab.alibaba-inc.com/kissy/m/raw/master/docs/core.html)
 1. [grunt-kmc](https://github.com/daxingplay/grunt-kmc)
 1. [Juicer](http://juicer.name)
 1. [grunt-flexcombo](https://github.com/jayli/grunt-flexcombo)

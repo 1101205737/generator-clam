@@ -71,6 +71,9 @@ module.exports = function (grunt) {
 
     /**
      * KISSY 模块构建，文档：http://gitlab.alibaba-inc.com/trip-tools/grunt-kmb/tree/master
+     * 自动将 require 里的 css 文件合并到当前 js 文件中
+     * 离线包环境下将依赖的别名模块静态合并到当前模块
+     * 注意：KMB 不会处理非 KISSY 模块的 js 文件，对于这些文件，请加入到下面的 copy 和 uglify 任务中完成构建
      */
     kmb: {
       options: {
@@ -111,7 +114,7 @@ module.exports = function (grunt) {
         files: [
           {
             cwd: 'src',
-            src: Gpkg.kmbOffline,
+            src: Gpkg.kmbOffline,                             // 只处理 abc.json 中指定的文件列表，按需构建
             dest: 'build_offline/',
             expand: true
           }
@@ -161,12 +164,12 @@ module.exports = function (grunt) {
       },
       offline: {
         options: {
-          replacement: null,
+          replacement: null,            // 直接从 src 目录下读取构建，不需要 replacement
           comboJS: true,
           comboCSS: true,
           convert2vm: false,
           convert2php: false,
-          mockFilter: true, // 是否过滤Demo中的JuicerMock
+          mockFilter: true,             // 是否过滤Demo中的JuicerMock
           comboExt: '_combo',
           meta: {
             'pageid': '181off.<%= abcpkg.name%>/${path|regexp,"build_offline/",""}'
@@ -306,7 +309,7 @@ module.exports = function (grunt) {
           weinrePort: 8091,				// weinre 运行端口号
           proxy: {
             interface: {
-              hosts: ['api.m.taobao.com', 'api.waptest.taobao.com', 'api.test.taobao.com'],
+              hosts: [/*'api.m.taobao.com', 'api.waptest.taobao.com', 'api.test.taobao.com'*/],
               script: 'proxy/interface.js'
             },
             webpage: {
@@ -318,7 +321,7 @@ module.exports = function (grunt) {
             //实际执行匹配类似于这句，将visa替换为url中的目录名称
             //"(.+)/trip/visa/\(.+\\.\)(css|js)":"$1/pages/$2$3",
             "(.+)/trip/\(widgets|libs|mods\)/\(.+\\.\)(js|css|png|jpg|gif)": "$1/$2/$3$4",
-            "(.+)/trip/[^\/]+/\(.+\\.\)(html|js|css|png|jpg|gif)": "$1/pages/$2$3",
+            "(.+)/trip/[^\/]+/\(.+\\.\)(html|js|css|png|jpg|gif)": "$1/pages/$2$3"
           }
         }
       }
@@ -508,9 +511,6 @@ module.exports = function (grunt) {
       },
       zip: {
         command: 'cd build_offline/; zip -P <%= abcpkg.zipPassWord %> -r9 ../build/<%= abcpkg.packageNameMd5 %>.zip *; cd ../'
-      },
-      build_alipay: {
-        command: 'hpm build -V <%= currentBranch %>'
       }
     },
 
@@ -563,10 +563,6 @@ module.exports = function (grunt) {
           {
             src: 'src/widgets/base/build/qa-seed-wlog-tmsparser-min.js',
             dest: 'build_offline/widgets/base/qa-seed-wlog-tmsparser.js'
-          },
-          {
-            src: 'src/widgets/mpi_css/mpi.css',
-            dest: 'build_offline/widgets/mpi_css/mpi.css'
           },
           {
             src: 'src/config.js',
@@ -790,17 +786,6 @@ module.exports = function (grunt) {
       'replace:main',
       'cssmin:main'
     ];
-    // TIP,2014-8-15：
-    // 根据规范，H5项目应当把所有的assets都inline进来
-    // 但由于awpp命令无法根据inline后的大文件计算正确的摘要值而导致发布失败
-    // 暂时将这个逻辑去掉，根本原因是awpp计算token的bug
-    /*
-     if(isH5){
-     actions = actions.concat([
-     'inline-assets:main'
-     ]);
-     }
-     */
     if (isH5) {
       actions = actions.concat([
         // 构建离线包
@@ -824,25 +809,12 @@ module.exports = function (grunt) {
   });
 
   // 默认构建任务
-  grunt.registerTask('build', '构建', function (type) {
+  grunt.registerTask('build', '默认构建流程', function (type) {
 
     if (!type) {
       task.run(['exec_build']);
-    } else if (type == 'alipay') {
-
-      var done = this.async();
-
-      // 获取当前分支
-      clamUtil.getBranchVersion(function (version) {
-        grunt.log.write(('当前分支：' + version).green);
-        grunt.config.set('currentBranch', version);
-
-        console.log('请先确认本地已安装 hpm, 如未安装请先执行 `sudo tnpm install -g hpm` 安装');
-        console.log('并确认 hpmfile.json 中 `appid`、`version`、`launchParams.url` 等参数配置无误');
-        task.run(['exec:build_alipay']);
-        done();
-      });
     }
+
   });
 
   // 压缩离线包

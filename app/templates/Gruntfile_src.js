@@ -567,6 +567,10 @@ module.exports = function (grunt) {
             dest: 'build_offline/widgets/base/qa-seed-wlog-tmsparser.js'
           },
           {
+            src: 'src/widgets/mpi_css/mpi.css',
+            dest: 'build_offline/widgets/mpi_css/mpi.css'
+          },
+          {
             src: 'src/config.js',
             dest: 'build_offline/config.js'
           }

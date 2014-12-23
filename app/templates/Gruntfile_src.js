@@ -161,10 +161,7 @@ module.exports = function (grunt) {
       },
       offline: {
         options: {
-          replacement: {
-            from: /src\//,
-            to: 'build_offline/'
-          },
+          replacement: null,
           comboJS: true,
           comboCSS: true,
           convert2vm: false,
@@ -360,7 +357,7 @@ module.exports = function (grunt) {
             expand: true,
             cwd: 'src/',
             src: ['**/*.less', '!widgets/**/*.less', '!**/build/**/*.less'],
-            dest: 'build_offline/',
+            dest: 'src/',
             ext: '.css'
           }
         ]
@@ -396,7 +393,7 @@ module.exports = function (grunt) {
             expand: true,
             cwd: 'src/',
             src: ['**/*.scss', '!widgets/**/*.scss', '!**/build/**/*.scss'],
-            dest: 'build_offline/',
+            dest: 'src/',
             ext: '.css'
           }
         ]

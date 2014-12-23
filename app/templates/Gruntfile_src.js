@@ -61,7 +61,7 @@ module.exports = function (grunt) {
         ]
       },
       zip: {
-        src: '<%= abcpkg.name%>.zip'
+        src: 'build/<%= abcpkg.packageNameMd5 %>.zip'
       }
     },
 
@@ -509,7 +509,7 @@ module.exports = function (grunt) {
         command: 'git checkout -b daily/<%= currentBranch %>'
       },
       zip: {
-        command: 'cd build_offline/; zip -r9 ../<%= abcpkg.name%>.zip *; cd ../'
+		command: 'cd build_offline/; zip -P <%= abcpkg.zipPassWord %> -r9 ../build/<%= abcpkg.packageNameMd5 %>.zip *; cd ../'
       },
       build_alipay: {
         command: 'hpm build -V <%= currentBranch %>'
@@ -569,16 +569,6 @@ module.exports = function (grunt) {
           {
             src: 'src/config.js',
             dest: 'build_offline/config.js'
-          }
-        ]
-      },
-      zip: {
-        files: [
-          {
-            expand: true,
-            src: '<%= abcpkg.name%>.zip',
-            dest: 'build/',
-            cwd: './'
           }
         ]
       }
@@ -772,8 +762,7 @@ module.exports = function (grunt) {
       //'uglify:offline',
       'cssmin:offline',
       'cacheinfo',
-      'exec:zip',
-      'copy:zip'
+      'exec:zip'
     ]);
   });
 
@@ -829,7 +818,6 @@ module.exports = function (grunt) {
         'clean:offline_build',
         'cacheinfo',
         'exec:zip',
-        'copy:zip'
       ]);
     }
     task.run(actions);

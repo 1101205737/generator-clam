@@ -260,7 +260,7 @@ ClamGenerator.prototype.app = function app() {
 		this.template('config.js');
 	}
 	this.template('README.md');
-	this.template('make.sh');
+	this.template('push.sh');
 	this.template('hpmfile.json');
 	this.mkdir('doc');
 	this.mkdir('build');

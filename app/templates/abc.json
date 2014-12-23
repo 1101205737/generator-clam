@@ -5,6 +5,7 @@
 	"dirName":"<%= dirName %>",
 	"packageNameMd5":"<%= packageNameMd5 %>",
 	"isH5": <%= isH5 %>,
+	"zipPassWord": "843be521ac514e81bd1c52982d36a8fc",
 	"port":"<%= port %>",
 	"proxyPort":"<%= proxyPort %>",
 	"group":"<%= groupName %>",

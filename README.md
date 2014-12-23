@@ -293,11 +293,9 @@ filter中的key是一个字符串形式的正则表达式，value是被替换的
 
 ### 九，去啊 App（`>=5.1.1`） 中，H5 离线包推包调试
 
-针对ios设备需要首先生成zip文件，在项目根目录下执行
+针对ios设备需要首先生成zip文件，构建完成后，`build/`里的zip文件即是要发布的离线包文件，推送到Android中，使用命令：
 
-	sh ./make.sh
-
-会在项目根目录生成类似`7d39b577c3bd29f13930234ae45f28f7.zip`的文件
+	sh ./push.sh
 
 #### 1. IOS 设备导入zip包
 
@@ -311,7 +309,7 @@ Android不需要导入zip包，直接将`build_offline`里的文件覆盖Android
 
 在项目根目录下执行
 
-	sh ./make.sh
+	sh ./push.sh
 
 导入完成
 
@@ -436,14 +434,20 @@ AWP平台和Clam自带的本地服务都支持这种解析
 
 ![](http://gtms03.alicdn.com/tps/i3/T19QhNFrlfXXbdiM7D-219-108.png)
 
+社区开源项目：
+
 1. [grunt](http://gruntjs.net/)
 1. [yeoman](http://yeomanjs.org/)
 1. [bower](http://bower.io/)
+1. [Less](http://www.lesscss.net/article/home.html) 和 [Sass](http://www.sass-lang.com/)
+
+内部开源：
+
+1. [mpiCss](http://groups.alidemo.cn/trip/h5-ui-component/build/pages/template/index.html)
 1. [kissy](http://docs.kissyui.com)
 1. [kissy-Mini](http://m.kissyui.com)
 1. [grunt-kmc](https://github.com/daxingplay/grunt-kmc)
 1. [Juicer](http://juicer.name)
-1. [Less](http://www.lesscss.net/article/home.html) 和 [Sass](http://www.sass-lang.com/)
 1. [grunt-flexcombo](https://github.com/jayli/grunt-flexcombo)
 1. [flexcombo](https://github.com/wayfind/flex-combo)
 

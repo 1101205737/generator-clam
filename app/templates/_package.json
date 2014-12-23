@@ -35,8 +35,7 @@
 	    "grunt-inline-assets":"",
         "grunt-domman":"",
         "grunt-kmb":"",
-        "matchdep":""
+        "jit-grunt":""
     },
-
     "dependencies": {}
 }

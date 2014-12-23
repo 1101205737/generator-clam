@@ -6,6 +6,4 @@
 # 同时adb推build_offline文件到android机器里
 
 cd build_offline
-zip build_offline.zip ./* -x bat.sh -r -P 843be521ac514e81bd1c52982d36a8fc
-mv build_offline.zip ../<%= packageNameMd5 %>.zip 
 adb push ./ /data/data/com.taobao.trip/files/h5app/<%= packageName %>/

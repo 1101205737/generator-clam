@@ -12,6 +12,12 @@ var path = require('path'),
 module.exports = function (grunt) {
   require('time-grunt')(grunt);
 
+  // -------------------------------------------------------------
+  // 智能载入模块
+  // https://github.com/shootaroo/jit-grunt
+  // -------------------------------------------------------------
+  require('jit-grunt')(grunt);
+
   var task = grunt.task;
 
   var watch_files = [
@@ -104,10 +110,7 @@ module.exports = function (grunt) {
         files: [
           {
             cwd: 'src',
-            src: ['**/*.js',
-              '!widgets/base/**/*',
-              '!**/*/Gruntfile.js',
-              '!**/build/**/*'],
+            src: Gpkg.kmbOffline,
             dest: 'build_offline/',
             expand: true
           }
@@ -157,10 +160,7 @@ module.exports = function (grunt) {
       },
       offline: {
         options: {
-          replacement: {
-            from: /src\//,
-            to: 'build_offline/'
-          },
+          replacement: null,
           comboJS: true,
           comboCSS: true,
           convert2vm: false,
@@ -240,7 +240,7 @@ module.exports = function (grunt) {
         }
       },
       // 线上代码调试服务
-      debug: {
+      online: {
         options: {
           // 无线H5项目调试，可打开host配置，用法参照
           // https://speakerdeck.com/lijing00333/grunt-flexcombo
@@ -464,9 +464,9 @@ module.exports = function (grunt) {
         files: ['src/**/*.less', 'src/**/*.scss'],
         tasks: ['less:dev', 'sass:dev']
       },
-      'debug': {
+      'online': {
         files: watch_files,
-        tasks: ['build_debug']
+        tasks: ['build_online_debug']
       },
       'offline': {
         files: watch_files,
@@ -562,6 +562,10 @@ module.exports = function (grunt) {
           {
             src: 'src/widgets/base/build/qa-seed-wlog-tmsparser-min.js',
             dest: 'build_offline/widgets/base/qa-seed-wlog-tmsparser.js'
+          },
+          {
+            src: 'src/widgets/mpi_css/mpi.css',
+            dest: 'build_offline/widgets/mpi_css/mpi.css'
           },
           {
             src: 'src/config.js',
@@ -662,11 +666,6 @@ module.exports = function (grunt) {
 
   });
 
-  // -------------------------------------------------------------
-  // 载入模块
-  // -------------------------------------------------------------
-  require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
-
 
   // -------------------------------------------------------------
   // 注册Grunt子命令
@@ -701,16 +700,16 @@ module.exports = function (grunt) {
     });
   });
 
-  // 启动Demo调试时的本地服务
+  // 启动 demo 调试时的本地服务
   grunt.registerTask('demo', '开启Demo调试模式', function () {
     task.run(['flexcombo:demo', 'watch:demo']);
   });
 
 
-  // 启动Debug调试时的本地服务
-  grunt.registerTask('debug', '开启debug模式', function () {
+  // 启动 online 调试时的本地服务
+  grunt.registerTask('online', '开启debug模式', function () {
 
-    task.run(['build_online_debug', 'flexcombo:debug', 'watch:debug']);
+    task.run(['build_online_debug', 'flexcombo:online', 'watch:online']);
   });
 
   grunt.registerTask('build_online_debug', '执行在线调试构建', function () {
@@ -762,8 +761,7 @@ module.exports = function (grunt) {
       //'uglify:offline',
       'cssmin:offline',
       'cacheinfo',
-      'exec:zip',
-      'copy:zip'
+      'exec:zip'
     ]);
   });
 
@@ -779,8 +777,6 @@ module.exports = function (grunt) {
     var actions = [
       // 构建准备流程
       'clean:build',
-      'clean:offline',
-      //'clean:zip',
       'less:main',
       'sass:main',
       'kmb:online',
@@ -807,6 +803,7 @@ module.exports = function (grunt) {
     if (isH5) {
       actions = actions.concat([
         // 构建离线包
+        'clean:offline',
         'kmb:offline',
         'copy:offline',
         'replace:offline',
@@ -814,12 +811,12 @@ module.exports = function (grunt) {
         'sass:offline',
         'combohtml:offline',
         'domman:offline',
+        'replace:offline',
         'uglify:offline',
         'cssmin:offline',
         'clean:offline_build',
         'cacheinfo',
-        'exec:zip',
-        'copy:zip'
+        'exec:zip'
       ]);
     }
     task.run(actions);

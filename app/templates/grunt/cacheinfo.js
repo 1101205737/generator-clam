@@ -8,4 +8,4 @@ module.exports = {
 		src: "build_offline",
 		dest: "build_offline/cache_info.json"
 	}
-}
+};

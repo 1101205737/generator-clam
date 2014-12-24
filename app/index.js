@@ -176,7 +176,7 @@ ClamGenerator.prototype.askFor = function askFor() {
 		this.packageName = props.projectName;// project-name
 		this.dirName = clamUtil.awppDirName(props.projectName);
 		md5.update(this.packageName);
-		this.packageNameMd5 = md5.digest('hex');;
+		this.packageNameMd5 = md5.digest('hex');
 		this.projectName = parseMojoName(this.packageName); //ProjectName
 		this.packageDesc = props.projectDesc;
 		this.author = props.author;

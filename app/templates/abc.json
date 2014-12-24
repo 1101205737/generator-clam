@@ -17,7 +17,7 @@
 	"baseUrl":"/trip/<%= dirName %>/search/index.html",
 	"env":"publish",
 	"kmbOffline":[
-		"search/index.js"
+		"pages/search/index.js"
 	],
 	"htmlProxy": [{
 		"urlReg": "^http://trip.taobao.com/index$",

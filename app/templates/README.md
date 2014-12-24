@@ -16,7 +16,7 @@ Demo 启动
 
 在线包调试：
 
-	grunt debug
+	grunt online
 
 命令帮助:`yo clam:h`
 

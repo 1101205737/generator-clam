@@ -8,7 +8,13 @@ module.exports = {
 			{
 				expand: true,
 				cwd: 'build/',
-				src: ['**/*.css', '!**/*-min.css', '!**/*.less.css', '!**/*.scss.css'],
+				src: [
+					'**/*.css',
+					'!**/*-min.css',
+					'!**/*.less.css',
+					'!**/*.scss.css',
+					'!**/widgets/mpi_css/**/*'
+				],
 				dest: 'build/',
 				ext: '-min.css'
 			}

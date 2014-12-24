@@ -178,7 +178,7 @@ ClamGenerator.prototype.askFor = function askFor() {
 		md5.update(this.packageName);
 		this.packageNameMd5 = md5.digest('hex');;
 		this.projectName = parseMojoName(this.packageName); //ProjectName
-		this.packageDesc = props.packageDesc;
+		this.packageDesc = props.projectDesc;
 		this.author = props.author;
 		this.email = props.email;
 		this.isH5 = (/^y/i).test(props.isH5) ? 'true':'false';

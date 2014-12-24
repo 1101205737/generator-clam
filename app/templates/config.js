@@ -38,7 +38,9 @@
     }
 
     // 离线包模式 A
-    debug = !/http(s)?:/.test(window.location.protocol);
+    if(!/http(s)?:/.test(window.location.protocol)){
+        debug = true;
+    }
 
     // 离线包模式 B
     if (window._$isOffline$_ || (window.MT_CONFIG && window.MT_CONFIG.offline)) {

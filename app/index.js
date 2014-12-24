@@ -250,7 +250,6 @@ ClamGenerator.prototype.app = function app() {
 			that.mkdir('src/widgets');
 		}
 		this.template('config.js', 'src/config.js');
-		this.template('map.js', 'src/map.js');
 	} else {
 		/*
 		 this.template('index.js');
@@ -269,6 +268,9 @@ ClamGenerator.prototype.app = function app() {
 	this.mkdir('proxy');
 	this.template('proxy/interface.js', 'proxy/interface.js');
 	this.template('proxy/webpage.js', 'proxy/webpage.js');
+
+	// grunt task config template
+	this.directory('grunt', 'grunt');
 
 	this.template('abc.json');
 	this.copy('bowerrc', '.bowerrc');

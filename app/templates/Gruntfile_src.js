@@ -16,12 +16,12 @@ var path = require('path'),
  * @param abcConfig {Object} abc.json 配置
  * @returns {Object}
  */
-function loadGruntConfig (abcConfig) {
+function loadGruntConfig (abcConfig, grunt) {
   var retObj = {};
   fs.readdirSync(GRUNT_TASK_DIR).forEach(function (taskConfigFile){
     var taskName = taskConfigFile.split('.')[0];
     var taskExport = require('./' + path.join(GRUNT_TASK_DIR, taskConfigFile));
-    retObj[taskName] = (typeof taskExport == 'function') ? taskExport(abcConfig) : taskExport;
+    retObj[taskName] = (typeof taskExport == 'function') ? taskExport(abcConfig, grunt) : taskExport;
   });
   return retObj;
 }
@@ -46,7 +46,7 @@ module.exports = function (grunt) {
 
   var abcConfig = require('./abc.json');
   var isH5 = abcConfig.isH5;
-  var gruntConfig = loadGruntConfig(abcConfig);
+  var gruntConfig = loadGruntConfig(abcConfig, grunt);
   gruntConfig.abcpkg = abcConfig;
   gruntConfig.currentBranch = 'master';
 
@@ -187,7 +187,6 @@ module.exports = function (grunt) {
         'domman:offline',
         'uglify:offline',
         'cssmin:offline',
-        'replace:offline',
         'clean:offline_build',
         'cacheinfo',
         'exec:zip'

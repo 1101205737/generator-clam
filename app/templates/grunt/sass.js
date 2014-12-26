@@ -30,7 +30,7 @@ module.exports = {
 				expand: true,
 				cwd: 'src/',
 				src: ['**/*.scss', '!widgets/**/*.scss', '!**/build/**/*.scss'],
-				dest: 'src/',
+				dest: 'build_offline/',
 				ext: '.css'
 			}
 		]

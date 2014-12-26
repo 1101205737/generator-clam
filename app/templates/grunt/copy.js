@@ -36,6 +36,10 @@ module.exports = {
 			{
 				src: 'src/config.js',
 				dest: 'build_offline/config.js'
+			},
+			{
+				src: 'src/widgets/mpi_css/mpi-min.css',
+				dest: 'build_offline/widgets/mpi_css/mpi.css'
 			}
 		]
 	}

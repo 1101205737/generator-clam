@@ -109,8 +109,7 @@ AppGenerator.prototype.askFor = function askFor() {
         }
 
 		var _tname = props.mojoName;
-
-        this.mojoName = this.modsPagesWidgets? this.modsPagesWidgets + '/' + props.mojoName : props.mojoName;// your-mod-name
+		this.mojoName = this.modsPagesWidgets? this.modsPagesWidgets + '/' + props.mojoName : props.mojoName;// your-mod-name
 		this.modName = parseName(_tname).replace(/^(~|-)/,'');//YourModName
 		this.packageName = abcJSON.name;// package-name
 		this.cssCompile = abcJSON.cssCompile;

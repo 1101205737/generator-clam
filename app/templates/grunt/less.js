@@ -35,7 +35,7 @@ module.exports = {
 				expand: true,
 				cwd: 'src/',
 				src: ['**/*.less', '!widgets/**/*.less', '!**/build/**/*.less'],
-				dest: 'src/',
+				dest: 'build_offline/',
 				ext: '.css'
 			}
 		]
